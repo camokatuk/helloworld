@@ -19,7 +19,7 @@ ClassÕóÿñ::ClassÕóÿñ()
 
 ClassÕóÿñ::~ClassÕóÿñ()
 {
-	delete this->head;
+	delete this->head; //meaningless comment
 }
 
 // index is validated!
