@@ -1,25 +1,25 @@
 #pragma once
 
-class ’у€сик
+class Node
 {
-	friend class Class’у€с;
+	friend class List;
 	private:
-		’у€сик* next = nullptr;
+		Node* next = nullptr;
 		int value;
 	public:
-		’у€сик(’у€сик* next, int value);
-		~’у€сик();
+		Node(Node* next, int value);
+		~Node();
 };
 
-class Class’у€с
+class List
 {
 	private:
-		’у€сик* head = nullptr;
+		Node* head = nullptr;
 		int length = 0;
-		’у€сик* угачака(int index);
+		Node* getNode(int index);
 	public:
-		Class’у€с();
-		~Class’у€с();
+		List();
+		~List();
 		int* get(int index);
 		void add(int value);
 		void remove(int index);

@@ -1,31 +1,31 @@
 #include "ClassX.h"
 #include <iostream>
 
-Õóÿñèê::Õóÿñèê(Õóÿñèê* next, int value)
+Node::Node(Node* next, int value)
 {
 	this->next = next;
 	this->value = value;
 }
 
-Õóÿñèê::~Õóÿñèê()
+Node::~Node()
 {
 	delete next;
 }
 
-ClassÕóÿñ::ClassÕóÿñ()
+List::List()
 {
 }
 
 
-ClassÕóÿñ::~ClassÕóÿñ()
+List::~List()
 {
 	delete this->head; //meaningless comment
 }
 
 // index is validated!
-Õóÿñèê* ClassÕóÿñ::óãà÷àêà(int index)
+Node* List::getNode(int index)
 {
-	Õóÿñèê* element = this->head;
+	Node* element = this->head;
 	for (int i = 0; i < index; i++)
 	{
 		element = element->next;
@@ -33,31 +33,31 @@ ClassÕóÿñ::~ClassÕóÿñ()
 	return element;
 }
 
-int* ClassÕóÿñ::get(int index)
+int* List::get(int index)
 {
 	if (index < 0 || index >= this->length)
 	{
 		return nullptr;
 	}
-	Õóÿñèê* element = this->óãà÷àêà(index);
+	Node* element = this->getNode(index);
 	return &(element->value);
 }
 
-void ClassÕóÿñ::add(int value)
+void List::add(int value)
 {
 	if (length == 0)
 	{
-		this->head = new Õóÿñèê(nullptr, value);
+		this->head = new Node(nullptr, value);
 		this->length++;
 		return;
 	}
 
-	Õóÿñèê* tail = this->óãà÷àêà(this->length - 1);
-	tail->next = new Õóÿñèê(nullptr, value);
+	Node* tail = this->getNode(this->length - 1);
+	tail->next = new Node(nullptr, value);
 	this->length++;
 }
 
-void ClassÕóÿñ::remove(int index)
+void List::remove(int index)
 {
 	if (index < 0 || index >= this->length)
 	{
@@ -72,28 +72,28 @@ void ClassÕóÿñ::remove(int index)
 		return;
 	}
 
-	Õóÿñèê* element = this->óãà÷àêà(index - 1);
-	Õóÿñèê* removeMe = element->next;
+	Node* element = this->getNode(index - 1);
+	Node* removeMe = element->next;
 
 	element->next = removeMe->next;
 	removeMe->next = nullptr; // detach tail
 	delete removeMe;
 }
 
-void ClassÕóÿñ::printAll()
+void List::printAll()
 {
 	if (!this->head)
 	{
 		return;
 	}
-	for (Õóÿñèê* element = this->head; element; element = element->next)
+	for (Node* element = this->head; element; element = element->next)
 	{
 		std::cout << element->value << (element->next ? ", " : "");
 	}
 	std::cout << std::endl;
 }
 
-void ClassÕóÿñ::printAllGets()
+void List::printAllGets()
 {
 	for (int i = 0; i < this->length; i++)
 	{
