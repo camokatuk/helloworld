@@ -12,6 +12,7 @@ Currently this class will be empty but in future tutorials will contain all the 
 
 #include <windows.h>
 
+#include "d3dclass.h"
 
 /////////////
 // GLOBALS //
@@ -34,6 +35,7 @@ public:
 
 private:
 	bool Render();
+	D3DClass* m_Direct3D;
 
 private:
 
