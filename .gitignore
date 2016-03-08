@@ -8,3 +8,5 @@ Platforms/
 *.idb
 *.pdb
 *.log
+*.exe
+*.ilk
