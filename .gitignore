@@ -2,3 +2,9 @@
 *.opendb
 Platforms/
 .vs/
+*.tlog
+*.lastbuildstate
+*.obj
+*.idb
+*.pdb
+*.log
