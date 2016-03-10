@@ -1,4 +1,6 @@
 #include "d3dclass.h"
+#include <atlbase.h>
+#include <vector>
 
 D3DClass::D3DClass()
 {
@@ -25,15 +27,62 @@ D3DClass::~D3DClass()
 bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,
 	float screenDepth, float screenNear)
 {
+	int adapter_number = 0;
+	CComPtr<DXFactory> factory;
+	std::vector<CComPtr<DXAdapter>> adapters;
+	std::vector<CComPtr<DXOutput>> outputs;
+	
+	DXAdapter* adapter;
+	DXOutput* output;
 	HRESULT result;
-	IDXGIFactory* factory;
-	IDXGIAdapter* adapter;
-	IDXGIOutput* adapterOutput;
+
+	// Create a DirectX graphics interface factory.
+	result = CREATE_FACTORY(__uuidof(DXFactory), (void**)&factory);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	while(true)
+	{
+		result = factory->ENUM_ADAPTERS(adapter_number, &adapter);
+		if (SUCCEEDED(result))
+		{
+			adapters.push_back(adapter);
+			// Enumerate the primary adapter output (monitor).
+			result = adapter->EnumOutputs(0, &output);
+			if (SUCCEEDED(result))
+			{
+				outputs.push_back(output);
+			}
+		}
+		else
+			break;
+		adapter_number++;
+	}
+	//Cycle through adapters until the device is initialized successfully or we're all out of adapters
+	for (auto& adapter : adapters)
+	{
+		for (auto& output : outputs)
+		{
+			if (InitializeAdapter(adapter, output, screenWidth, screenHeight, vsync, hwnd, fullscreen, screenDepth, screenNear))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool D3DClass::InitializeAdapter(DXAdapter* adapter, IDXGIOutput* adapterOutput, int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen,
+	float screenDepth, float screenNear)
+{
+	HRESULT result;
+	
 	unsigned int numModes, i, numerator, denominator;
-	unsigned long long stringLength;
 	DXGI_MODE_DESC* displayModeList;
 	DXGI_ADAPTER_DESC adapterDesc;
-	int error;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	D3D_FEATURE_LEVEL featureLevel;
 	ID3D11Texture2D* backBufferPtr;
@@ -47,34 +96,17 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 
 	// Store the vsync setting.
 	m_vsync_enabled = vsync;
+	m_adapter_initialized = false;
 
-	/*efore we can initialize Direct3D we have to get the refresh rate from the video card/monitor. 
+	/*before we can initialize Direct3D we have to get the refresh rate from the video card/monitor. 
 	Each computer may be slightly different so we will need to query for that information. 
 	We query for the numerator and denominator values and then pass them to DirectX during the setup and it will calculate the proper refresh rate. 
 	If we don't do this and just set the refresh rate to a default value which may not exist on all computers then DirectX will 
 	respond by performing a blit instead of a buffer flip which will degrade performance and give us annoying errors in the debug output.*/
 
-	// Create a DirectX graphics interface factory.
-	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	m_adapter_initialized = true;
 
-	// Use the factory to create an adapter for the primary graphics interface (video card).
-	result = factory->EnumAdapters(0, &adapter);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	// Enumerate the primary adapter output (monitor).
-	result = adapter->EnumOutputs(0, &adapterOutput);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
+	
 	// Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
 	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 	if (FAILED(result))
@@ -121,27 +153,11 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	m_videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
 
 	// Convert the name of the video card to a character array and store it.
-	error = wcstombs_s(&stringLength, m_videoCardDescription, 128, adapterDesc.Description, 128);
-	if (error != 0)
-	{
-		return false;
-	}
+	m_videoCardDescription = adapterDesc.Description;
 
 	// Release the display mode list.
 	delete[] displayModeList;
 	displayModeList = 0;
-
-	// Release the adapter output.
-	adapterOutput->Release();
-	adapterOutput = 0;
-
-	// Release the adapter.
-	adapter->Release();
-	adapter = 0;
-
-	// Release the factory.
-	factory->Release();
-	factory = 0;
 
 	/*Now that we have the refresh rate from the system we can start the DirectX initialization. 
 	The first thing we'll do is fill out the description of the swap chain. 
@@ -214,7 +230,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
+	result = D3D11CreateDeviceAndSwapChain(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, &featureLevel, 1,
 		D3D11_SDK_VERSION, &swapChainDesc, &m_swapChain, &m_device, NULL, &m_deviceContext);
 	if (FAILED(result))
 	{
@@ -542,9 +558,9 @@ void D3DClass::GetOrthoMatrix(XMMATRIX& orthoMatrix)
 	return;
 }
 
-void D3DClass::GetVideoCardInfo(char* cardName, int& memory)
+void D3DClass::GetVideoCardInfo(std::wstring& cardName, int& memory)
 {
-	strcpy_s(cardName, 128, m_videoCardDescription);
+	cardName = m_videoCardDescription;
 	memory = m_videoCardMemory;
 	return;
 }
