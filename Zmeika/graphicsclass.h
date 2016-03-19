@@ -13,6 +13,9 @@ Currently this class will be empty but in future tutorials will contain all the 
 #include <windows.h>
 
 #include "d3dclass.h"
+#include "cameraclass.h"
+#include "modelclass.h"
+#include "colorshaderclass.h"
 
 /////////////
 // GLOBALS //
@@ -35,7 +38,12 @@ public:
 
 private:
 	bool Render();
+
+private:
 	D3DClass* m_Direct3D;
+	CameraClass* m_Camera;
+	ModelClass* m_Model;
+	ColorShaderClass* m_ColorShader;
 
 private:
 
