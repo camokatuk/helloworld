@@ -36,9 +36,11 @@ public:
 	void Shutdown();
 	bool Frame();
 
+	void moveCamera(float x, float y, float z);
+
 private:
 	bool Render();
-
+	
 private:
 	D3DClass* m_Direct3D;
 	CameraClass* m_Camera;

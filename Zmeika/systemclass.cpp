@@ -157,6 +157,26 @@ bool SystemClass::Frame()
 		return false;
 	}
 
+	if (m_Input->IsKeyDown(VkKeyScan('a')))
+	{
+		m_Graphics->moveCamera(0.2f, 0.0f, 0.0f);
+	}
+
+	if (m_Input->IsKeyDown(VkKeyScan('s')))
+	{
+		m_Graphics->moveCamera(0.0f, 0.2f, 0.0f);
+	}
+
+	if (m_Input->IsKeyDown(VkKeyScan('d')))
+	{
+		m_Graphics->moveCamera(-0.2f, 0.0f, 0.0f);
+	}
+
+	if (m_Input->IsKeyDown(VkKeyScan('w')))
+	{
+		m_Graphics->moveCamera(0.0f, -0.2f, 0.0f);
+	}
+
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();
 	if (!result)

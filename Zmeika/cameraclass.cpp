@@ -15,11 +15,20 @@ CameraClass::CameraClass()
 
 CameraClass::CameraClass(const CameraClass& other)
 {
+	
 }
 
 
 CameraClass::~CameraClass()
 {
+}
+
+void CameraClass::move(float x, float y, float z)
+{
+	m_positionX += x;
+	m_positionY += y;
+	m_positionZ += z;
+	return;
 }
 
 // The SetPosition and SetRotation functions are used for setting up the position and rotation of the camera.

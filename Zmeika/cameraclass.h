@@ -21,6 +21,8 @@ public:
 	CameraClass(const CameraClass&);
 	~CameraClass();
 
+	void move(float x, float y, float z);
+
 	void SetPosition(float, float, float);
 	void SetRotation(float, float, float);
 
