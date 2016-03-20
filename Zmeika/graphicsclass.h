@@ -17,6 +17,8 @@ Currently this class will be empty but in future tutorials will contain all the 
 #include "modelclass.h"
 #include "colorshaderclass.h"
 
+#include "ZmeikaGame.h"
+
 /////////////
 // GLOBALS //
 /////////////
@@ -32,7 +34,7 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
+	bool Initialize(int, int, HWND, ZmeikaGame* game);
 	void Shutdown();
 	bool Frame();
 
@@ -46,6 +48,8 @@ private:
 	CameraClass* m_Camera;
 	ModelClass* m_Model;
 	ColorShaderClass* m_ColorShader;
+
+	ZmeikaGame* game_;
 
 private:
 

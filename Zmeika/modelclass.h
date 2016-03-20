@@ -10,10 +10,8 @@
 #include <directxmath.h>
 using namespace DirectX;
 
+#include "ZmeikaGame.h"
 
-////////////////////////////////////////////////////////////////////////////////
-// Class name: ModelClass
-////////////////////////////////////////////////////////////////////////////////
 class ModelClass
 {
 private:
@@ -26,8 +24,10 @@ private:
 		XMFLOAT4 color;
 	};
 
+	ZmeikaGame* game_;
+
 public:
-	ModelClass();
+	ModelClass(ZmeikaGame* game);
 	ModelClass(const ModelClass&);
 	~ModelClass();
 	/*The functions here handle initializing and shutdown of the model's vertex and index buffers. The Render function puts the model
@@ -47,6 +47,7 @@ private:
 	/* The private variables in the ModelClass are the vertex and index buffer as well as two integers to keep track of the size of each buffer.
 	Note that all DirectX 11 buffers generally use the generic ID3D11Buffer type and are more clearly identified by a buffer description when they are first created.*/
 
+	void drawZmeikaCell(int x, int y, std::vector<VertexType>* vertices, std::vector<unsigned long>* indices);
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;

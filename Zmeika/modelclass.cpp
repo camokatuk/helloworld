@@ -1,10 +1,12 @@
 #include "modelclass.h"
+#include "ZmeikaGame.h"
 // The class constructor initializes the vertex and index buffer pointers to null.
 
-ModelClass::ModelClass()
+ModelClass::ModelClass(ZmeikaGame* game)
 {
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
+	game_ = game;
 }
 
 
@@ -58,6 +60,42 @@ int ModelClass::GetIndexCount()
 	return m_indexCount;
 }
 
+const float SIDE = 1.0f;
+
+void ModelClass::drawZmeikaCell(int x, int y, std::vector<VertexType>* vertices, std::vector<unsigned long>* indices)
+{
+	VertexType vertex1;
+	vertex1.position = XMFLOAT3(SIDE / 2 + SIDE * x, - SIDE / 2 - SIDE * y, 0.0f);  // Bottom left.
+	vertex1.color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	vertices->push_back(vertex1);
+
+	VertexType vertex2;
+	vertex2.position = XMFLOAT3(- SIDE / 2 - SIDE * x, SIDE / 2 + SIDE * y, 0.0f);  // Top middle.
+	vertex2.color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	vertices->push_back(vertex2);
+
+	VertexType vertex3;
+	vertex3.position = XMFLOAT3(SIDE / 2 + SIDE * x, SIDE / 2 + SIDE * y, 0.0f);  // Bottom right.
+	vertex3.color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices->push_back(vertex3);
+
+	VertexType vertex4;
+	vertex4.position = XMFLOAT3(- SIDE / 2 - SIDE * x, - SIDE / 2 - SIDE * y, 0.0f);  // Bottom right.
+	vertex4.color = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+	vertices->push_back(vertex4);
+
+	// Load the index array with data.
+	int size = vertices->size() - 4;
+
+	indices->push_back(size);
+	indices->push_back(size + 1);
+	indices->push_back(size + 2);
+
+	indices->push_back(size + 2);
+	indices->push_back(size + 3);
+	indices->push_back(size);
+}
+
 /* The InitializeBuffers function is where we handle creating the vertex and index buffers.Usually you would read in a model and create the buffers
 from that data file.For this tutorial we will just set the points in the vertex and index buffer manually since it is only a single triangle.*/
 bool ModelClass::InitializeBuffers(ID3D11Device* device)
@@ -68,26 +106,29 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 	
-	// First create two temporary arrays to hold the vertex and index data that we will use later to populate the final buffers with.
-	// Set the number of vertices in the vertex array.
-	m_vertexCount = 4;
+	Zmeika* zmeika = game_->getZmeika();
+	std::vector<ZmeikaCell> zmeikaCells = zmeika->getCells();
 
-	// Set the number of indices in the index array.
-	m_indexCount = 6;
+	//// First create two temporary arrays to hold the vertex and index data that we will use later to populate the final buffers with.
+	//// Set the number of vertices in the vertex array.
+	m_vertexCount = zmeikaCells.size() * 4;
 
-	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
-	if (!vertices)
-	{
-		return false;
-	}
+	//// Set the number of indices in the index array.
+	m_indexCount = zmeikaCells.size() * 6;
 
-	// Create the index array.
-	indices = new unsigned long[m_indexCount];
-	if (!indices)
-	{
-		return false;
-	}
+	//// Create the vertex array.
+	//vertices = new VertexType[m_vertexCount];
+	//if (!vertices)
+	//{
+	//	return false;
+	//}
+
+	//// Create the index array.
+	//indices = new unsigned long[m_indexCount];
+	//if (!indices)
+	//{
+	//	return false;
+	//}
 	
 	// Now fill both the vertex and index array with the three points of the triangle as well as the index to each of the points.
 	// Please note that I create the points in the clockwise order of drawing them.If you do this counter clockwise it will think the triangle 
@@ -95,27 +136,19 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	// to the GPU is very important.The color is set here as well since it is part of the vertex description.I set the color to green.
 
 	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	vertices[1].position = XMFLOAT3(-1.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	vertices[2].position = XMFLOAT3(1.0f, 1.0f, 0.0f);  // Bottom right.
-	vertices[2].color = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-
-	vertices[3].position = XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[3].color = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
 	
-	indices[3] = 2; 
-	indices[4] = 3;
-	indices[5] = 0;
-	
+	std::vector<VertexType> verticesVector;
+	std::vector<unsigned long> indicesVector;
+
+	for (auto &cell : zmeikaCells)
+	{
+		drawZmeikaCell(cell.getCoord(0), cell.getCoord(1), &verticesVector, &indicesVector);
+	}
+
+	vertices = &verticesVector[0];
+	indices = &indicesVector[0];
+
+	VertexType asd = vertices[11];
 	/* With the vertex array and index array filled out we can now use those to create the vertex buffer and index buffer.
 	Creating both buffers is done in the same fashion.First fill out a description of the buffer.In the description the ByteWidth(size of the buffer) 
 	and the BindFlags(type of buffer) are what you need to ensure are filled out correctly.After the description is filled out you need to also fill 
@@ -123,7 +156,7 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	you can call CreateBuffer using the D3D device and it will return a pointer to your new buffer.*/
 
 	// Set up the description of the static vertex buffer.
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+ 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;

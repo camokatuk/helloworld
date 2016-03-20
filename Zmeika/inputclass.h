@@ -23,6 +23,7 @@ public:
 	void KeyUp(unsigned int);
 
 	bool IsKeyDown(unsigned int);
+	bool* InputClass::getAllPressedKeys();
 
 private:
 	bool m_keys[256];

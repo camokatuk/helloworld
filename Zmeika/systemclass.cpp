@@ -1,9 +1,11 @@
 #include "systemclass.h"
+#include "ZmeikaGame.h"
 
 SystemClass::SystemClass()
 {
 	m_Input = 0;
 	m_Graphics = 0;
+	m_Game = 0;
 }
 
 SystemClass::SystemClass(const SystemClass& other)
@@ -25,7 +27,8 @@ bool SystemClass::Initialize()
 	int screenWidth, screenHeight;
 	bool result;
 
-
+	m_Game = new ZmeikaGame;
+	
 	// Initialize the width and height of the screen to zero before sending the variables into the function.
 	screenWidth = 0;
 	screenHeight = 0;
@@ -51,7 +54,7 @@ bool SystemClass::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd);
+	result = m_Graphics->Initialize(screenWidth, screenHeight, m_hwnd, m_Game);
 	if (!result)
 	{
 		return false;
@@ -108,6 +111,8 @@ void SystemClass::Run()
 
 	// Initialize the message structure.
 	ZeroMemory(&msg, sizeof(MSG));
+
+	m_Game->start();
 
 	// Loop until there is a quit message from the window or the user.
 	done = false;
@@ -177,6 +182,15 @@ bool SystemClass::Frame()
 		m_Graphics->moveCamera(0.0f, -0.2f, 0.0f);
 	}
 
+	bool* allKeys = m_Input->getAllPressedKeys();
+	for (int key = 0; key < 256; key++)
+	{
+		if (allKeys[key])
+		{
+			m_Game->onKeyEvent(key);
+		}
+	}
+	
 	// Do the frame processing for the graphics object.
 	result = m_Graphics->Frame();
 	if (!result)

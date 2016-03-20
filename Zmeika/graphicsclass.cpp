@@ -1,5 +1,5 @@
 #include "graphicsclass.h"
-
+#include "ZmeikaGame.h"
 
 GraphicsClass::GraphicsClass()
 {
@@ -20,7 +20,7 @@ GraphicsClass::~GraphicsClass()
 }
 
 
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, ZmeikaGame* game)
 {
 	bool result;
 
@@ -50,7 +50,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(0.0f, 0.0f, -15.0f);
 	// Create the model object.
-	m_Model = new ModelClass;
+	m_Model = new ModelClass(game);
 	if (!m_Model)
 	{
 		return false;

@@ -150,15 +150,22 @@
     <ClCompile Include="inputclass.cpp" />
     <ClCompile Include="modelclass.cpp" />
     <ClCompile Include="systemclass.cpp" />
+    <ClCompile Include="Zmeika2DSimple.cpp" />
+    <ClCompile Include="ZmeikaGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cameraclass.h" />
     <ClInclude Include="colorshaderclass.h" />
     <ClInclude Include="d3dclass.h" />
     <ClInclude Include="graphicsclass.h" />
+    <ClInclude Include="Zmeika2D.h" />
     <ClInclude Include="inputclass.h" />
     <ClInclude Include="modelclass.h" />
     <ClInclude Include="systemclass.h" />
+    <ClInclude Include="Zmeika.h" />
+    <ClInclude Include="ZmeikaCell.h" />
+    <ClInclude Include="ZmeikaGame.h" />
+    <ClInclude Include="ZmeikaMap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="color.ps" />

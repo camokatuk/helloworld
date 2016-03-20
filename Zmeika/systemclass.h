@@ -10,6 +10,8 @@
 #include "inputclass.h"
 #include "graphicsclass.h"
 
+#include "ZmeikaGame.h"
+
 class SystemClass
 {
 public:
@@ -35,6 +37,7 @@ private:
 
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
+	ZmeikaGame* m_Game;
 };
 
 
