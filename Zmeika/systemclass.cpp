@@ -162,22 +162,22 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	if (m_Input->IsKeyDown(VkKeyScan('a')))
+	if (m_Input->IsKeyDown(0x41))
 	{
 		m_Graphics->moveCamera(0.2f, 0.0f, 0.0f);
 	}
 
-	if (m_Input->IsKeyDown(VkKeyScan('s')))
+	if (m_Input->IsKeyDown(0x53))
 	{
 		m_Graphics->moveCamera(0.0f, 0.2f, 0.0f);
 	}
 
-	if (m_Input->IsKeyDown(VkKeyScan('d')))
+	if (m_Input->IsKeyDown(0x44))
 	{
 		m_Graphics->moveCamera(-0.2f, 0.0f, 0.0f);
 	}
 
-	if (m_Input->IsKeyDown(VkKeyScan('w')))
+	if (m_Input->IsKeyDown(0x57))
 	{
 		m_Graphics->moveCamera(0.0f, -0.2f, 0.0f);
 	}
