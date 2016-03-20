@@ -21,7 +21,12 @@ ZmeikaGame::~ZmeikaGame()
 
 void ZmeikaGame::start()
 {
+	
+}
 
+void ZmeikaGame::update()
+{
+	zmeika_->move(map_);
 }
 
 void ZmeikaGame::onKeyEvent(int key)

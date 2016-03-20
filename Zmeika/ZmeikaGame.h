@@ -13,6 +13,7 @@ public:
 	~ZmeikaGame();
 
 	void start();
+	void update();
 	void onKeyEvent(int key);
 	void end();
 

@@ -116,20 +116,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 	//// Set the number of indices in the index array.
 	m_indexCount = zmeikaCells.size() * 6;
 
-	//// Create the vertex array.
-	//vertices = new VertexType[m_vertexCount];
-	//if (!vertices)
-	//{
-	//	return false;
-	//}
-
-	//// Create the index array.
-	//indices = new unsigned long[m_indexCount];
-	//if (!indices)
-	//{
-	//	return false;
-	//}
-	
 	// Now fill both the vertex and index array with the three points of the triangle as well as the index to each of the points.
 	// Please note that I create the points in the clockwise order of drawing them.If you do this counter clockwise it will think the triangle 
 	// is facing the opposite direction and not draw it due to back face culling.Always remember that the order in which you send your vertices 
@@ -195,14 +181,6 @@ bool ModelClass::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 	
-	// After the vertex buffer and index buffer have been created you can delete the vertex and index arrays as they are no longer needed since the data was copied into the buffers.
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
-	delete[] vertices;
-	vertices = 0;
-
-	delete[] indices;
-	indices = 0;
-
 	return true;
 }
 
